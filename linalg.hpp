@@ -81,6 +81,15 @@ struct vector {
     constexpr
     T const& operator[](usize idx) const { return data[idx]; }
 
+	constexpr
+	vector clip(T const& lo, T const& hi){
+		vector<T, N> res;
+		for(usize i = 0; i < N; i += 1){
+			res[i] = clamp(lo, data[i], hi);
+		}
+		return res;
+	}
+
 	static constexpr
 	vector splat(T const& scalar){
 		vector<T, N> v;
@@ -459,18 +468,18 @@ auto name_(matrix<T, NR, NC> const& a){                             \
 	return res;                                                     \
 }
 
-#define SCALAR_ARITH_OP2(name_, token_) \
-template<typename T, usize NR, usize NC>                \
-constexpr                                               \
+#define SCALAR_ARITH_OP2(name_, token_)                  \
+template<typename T, usize NR, usize NC>                 \
+constexpr                                                \
 auto name_ (matrix<T, NR, NC> const& m, T const& value){ \
-	matrix<T, NR, NC> res;                              \
-	for(usize i = 0; i < NC; i += 1){                   \
-		res.columns[i] = m.columns[i] token_ value;     \
-	}                                                   \
-	return res;                                         \
-}                                                       \
-template<typename T, usize NR, usize NC>                \
-constexpr                                               \
+	matrix<T, NR, NC> res;                               \
+	for(usize i = 0; i < NC; i += 1){                    \
+		res.columns[i] = m.columns[i] token_ value;      \
+	}                                                    \
+	return res;                                          \
+}                                                        \
+template<typename T, usize NR, usize NC>                 \
+constexpr                                                \
 auto name_ (T const& value, matrix<T, NR, NC> const& m){ return m token_ value; }
 
 #define SCALAR_LOGIC_OP2(name_, token_) \
