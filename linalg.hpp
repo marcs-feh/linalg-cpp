@@ -66,6 +66,8 @@ T clamp(T const& mini, T const& x, T const& maxi){
 
 template<typename T, usize N>
 struct vector {
+    T data[N]{};
+
     constexpr
     usize size() const { return N; }
 
@@ -102,47 +104,38 @@ struct vector {
     // C++ Iterator insanity.
     using value_type = T;
 
-    struct iterator {
-        constexpr iterator(T* data) : ptr_val(data) {}
+    struct VecIterator {
+        constexpr VecIterator(T* data) : ptr_val(data) {}
         constexpr T& operator*() const { return *ptr_val; }
         constexpr T* operator->() const { return ptr_val; }
         constexpr auto& operator++(){ ptr_val += 1; return *this; }
-        constexpr bool operator==(iterator const& it){ return ptr_val == it.ptr_val; }
-        constexpr bool operator!=(iterator const& it){ return ptr_val != it.ptr_val; }
+        constexpr bool operator==(VecIterator const& it){ return ptr_val == it.ptr_val; }
+        constexpr bool operator!=(VecIterator const& it){ return ptr_val != it.ptr_val; }
     private:
         T* ptr_val;
     };
 
-    struct const_iterator {
-        constexpr const_iterator(T const* data) : ptr_val(data) {}
+    struct ConstVecIterator {
+        constexpr ConstVecIterator(T const* data) : ptr_val(data) {}
         constexpr T const& operator*() const { return *ptr_val; }
         constexpr T* operator->() const { return ptr_val; }
         constexpr auto& operator++(){ ptr_val += 1; return *this; }
-        constexpr bool operator==(const_iterator const& it){ return ptr_val == it.ptr_val; }
-        constexpr bool operator!=(const_iterator const& it){ return ptr_val != it.ptr_val; }
+        constexpr bool operator==(ConstVecIterator const& it){ return ptr_val == it.ptr_val; }
+        constexpr bool operator!=(ConstVecIterator const& it){ return ptr_val != it.ptr_val; }
 
     private:
         T const* ptr_val;
     };
 
 
-    constexpr auto begin(){
-        return iterator(&data[0]);
-    }
+    constexpr auto begin(){ return VecIterator(&data[0]); }
 
-    constexpr auto end(){
-        return iterator(&data[N]);
-    }
+    constexpr auto end(){ return VecIterator(&data[N]); }
 
-    constexpr auto begin() const {
-        return const_iterator(&data[0]);
-    }
+    constexpr auto begin() const { return ConstVecIterator(&data[0]); }
 
-    constexpr auto end() const {
-        return const_iterator(&data[N]);
-    }
+    constexpr auto end() const { return ConstVecIterator(&data[N]); }
 
-    T data[N]{};
 };
 
 template<typename T, usize N>
@@ -328,13 +321,13 @@ SCALAR_LOGIC_OP2(operator<=, <=);
 SCALAR_LOGIC_OP2(operator<,  <);
 SCALAR_LOGIC_OP2(operator>,  >);
 
-}
-
 #undef SCALAR_ARITH_OP2
 #undef SCALAR_LOGIC_OP2
 #undef ARITH_OP1
 #undef ARITH_OP2
 #undef LOGIC_OP2
+}
+
 
 /// Matrix /////////////////////////////////////////////////////////////////////
 namespace linalg {
@@ -541,13 +534,13 @@ SCALAR_LOGIC_OP2(operator>=, >=);
 SCALAR_LOGIC_OP2(operator<=, <=);
 SCALAR_LOGIC_OP2(operator<,  <);
 SCALAR_LOGIC_OP2(operator>,  >);
-}
 
 #undef SCALAR_ARITH_OP2
 #undef SCALAR_LOGIC_OP2
 #undef ARITH_OP1
 #undef ARITH_OP2
 #undef LOGIC_OP2
+}
 
 /*
 	Copyright 2024 marcs-feh
